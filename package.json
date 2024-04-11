@@ -17,9 +17,11 @@
   "bugs": {
     "url": "https://github.com/aarav27/csc-307-app/issues"
   },
-  "homepage": "https://github.com/aarav27/csc-307-app#readme"
-  ,
+  "homepage": "https://github.com/aarav27/csc-307-app#readme",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
 }

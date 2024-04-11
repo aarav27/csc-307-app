@@ -1,4 +1,5 @@
 import express from "express";
+// Helpful Note: Use export DEBUG='express:router'
 
 const app = express();
 const port = 8000;
