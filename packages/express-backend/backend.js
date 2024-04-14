@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 // Helpful Note: Use export DEBUG='express:router'
 
 const app = express();
@@ -65,6 +66,7 @@ const deleteUserByID = (id) => {
     return userToDelete;
 }
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
