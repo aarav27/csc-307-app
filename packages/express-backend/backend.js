@@ -107,8 +107,13 @@ app.post('/users', (req, res) => {
 
 app.delete('/users', (req, res) => {
     const user_id = req.body
-    deleteUserByID(user_id["id"]);
-    res.send(`Deleted User With User ID ${user_id["id"]}`);
+    const result = deleteUserByID(user_id["id"]);
+    if(result === undefined){
+        res.status(404).send("Resource Not Found");
+    }
+    else{
+        res.send(`Deleted User With User ID ${user_id["id"]}`);
+    }
 })
 
 app.listen(port, () => {
