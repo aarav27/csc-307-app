@@ -17,13 +17,13 @@ function MyApp(){
         postUser(person)
             .then((response) => {
                 if(response.status == 201) {
-                    return response.json();
+                    return response.json()
                 }
                 else{
                     throw new Error("User Not Added" + response.status);
                 }
             })
-            .then(() => setCharacters([...characters, person]))
+            .then((newPerson) => setCharacters([...characters, newPerson]))
             .catch((error) => {console.log(error)});
     }
 
