@@ -7,10 +7,18 @@ function MyApp(){
     const [characters, setCharacters] = useState([])
 
     function removeOneCharacter(index){
-        const updated = characters.filter((character, i) => {
-            return i != index;
-        });
-        setCharacters(updated);
+        const personToDelete = characters[index];
+        deleteUser(personToDelete.id)
+            .then((response) => {
+                if(response.status == 204){
+                    const updated = characters.filter((character) => character.id != personToDelete.id);
+                    setCharacters(updated);
+                }
+                else{
+                    throw new Error("User Not Deleted: " + response.status)
+                }
+            })
+            .catch((error) => {console.log(error)});
     }
 
     function updateList(person){
@@ -20,7 +28,7 @@ function MyApp(){
                     return response.json()
                 }
                 else{
-                    throw new Error("User Not Added" + response.status);
+                    throw new Error("User Not Added: " + response.status);
                 }
             })
             .then((newPerson) => setCharacters([...characters, newPerson]))
@@ -47,6 +55,16 @@ function MyApp(){
             },
             body: JSON.stringify(person)
         });
+        return promise
+    }
+
+    function deleteUser(person_id){
+        const promise = fetch(`http://localhost:8000/users/${person_id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
         return promise
     }
 

@@ -61,10 +61,10 @@ const addUser = (user) => {
 }
 
 const deleteUserByID = (id) => {
-    const userToDelete = users["users_list"].find(
-        (user) => user["id"] == id
-    )
-    users["users_list"].pop(userToDelete);
+    const userToDelete = users["users_list"].find((user) => user["id"] == id)
+    if (userToDelete !== undefined){
+        users["users_list"] = users["users_list"].filter(user => user != userToDelete);
+    }
     return userToDelete;
 }
 
@@ -120,14 +120,15 @@ app.post('/users', (req, res) => {
     res.status(201).send(newUser);
 })
 
-app.delete('/users', (req, res) => {
-    const user_id = req.body
-    const result = deleteUserByID(user_id["id"]);
+app.delete('/users/:id', (req, res) => {
+    const user_id = req.params["id"];
+    const result = deleteUserByID(user_id);
     if(result === undefined){
         res.status(404).send("Resource Not Found");
     }
     else{
-        res.send(`Deleted User With User ID ${user_id["id"]}`);
+        console.log("Backend Complete")
+        res.status(204).send();
     }
 })
 
