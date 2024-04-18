@@ -106,7 +106,6 @@ app.get('/users', (req,res) => {
 app.get('/users/:id', (req, res) => {
     const id = req.params["id"]
     let result = findUserById(id);
-    console.log(result)
     if(result === undefined){
         res.status(404).send("Resource Not Found");
     }
@@ -128,7 +127,6 @@ app.delete('/users/:id', (req, res) => {
         res.status(404).send("Resource Not Found");
     }
     else{
-        console.log("Backend Complete")
         res.status(204).send();
     }
 })
