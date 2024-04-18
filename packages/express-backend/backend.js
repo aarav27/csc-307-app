@@ -71,10 +71,11 @@ const deleteUserByID = (id) => {
 const generateRandomUserID = () => {
     const letters = "abcdefghijklmnopqrstuvwxyz";
     let string_id = "";
+    let num_id = "";
     for(let i = 0; i < 3; i += 1){
         string_id += letters[parseInt(Math.random() * letters.length)];
+        num_id += String(parseInt(Math.random() * 10));
     }
-    const num_id = String(parseInt(Math.random() * 1000));
     const user_id = string_id + num_id;
     return user_id
 }
