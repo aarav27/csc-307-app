@@ -27,6 +27,9 @@ function getUsers(name, job){
     else if(job && !name){
         promise = findUserByJob(job)
     }
+    else if(name && job){
+        promise = findUserByNameJob(name, job)
+    }
     return promise;
 }
 
@@ -53,11 +56,7 @@ function addUser(user){
 }
 
 const deleteUserByID = (id) => {
-    const userToDelete = users["users_list"].find((user) => user["id"] == id)
-    if (userToDelete !== undefined){
-        users["users_list"] = users["users_list"].filter(user => user != userToDelete);
-    }
-    return userToDelete;
+    return User.findByIdAndDelete(id);
 }
 
 const generateRandomUserID = () => {
@@ -85,11 +84,11 @@ app.get('/users', (req,res) => {
     getUsers(name, job)
         .then((result) => {
             const users = {user_list: result}
-            console.log(users)
             res.send(users)
         })
         .catch((error) => {
             console.log(error)
+            res.status(500).send('Internal Server Error');
         })
 });
 
@@ -119,23 +118,16 @@ app.post('/users', (req, res) => {
 
 app.delete('/users/:id', (req, res) => {
     const user_id = req.params["id"];
-    const result = deleteUserByID(user_id);
-    if(result === undefined){
-        res.status(404).send("Resource Not Found");
-    }
-    else{
-        res.status(204).send();
-    }
+    deleteUserByID(user_id)
+        .then(() => {
+            res.status(204).send();
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(404).send("Resource Not Found");
+        })
 })
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
-
-export default {
-    addUser,
-    getUsers,
-    findUserById,
-    findUserByName,
-    findUserByJob,
-  };
