@@ -84,7 +84,12 @@ app.get('/users/:id', (req, res) => {
     const id = req.params["id"]
     findUserById(id)
         .then((result) => {
-            res.send(result);
+            if(!result || result == undefined){
+                res.status(404).send("Resource Not Found");
+            }
+            else{
+                res.status(204).send();
+            }
         })
         .catch((error) => {
             console.log(error);
@@ -107,8 +112,13 @@ app.post('/users', (req, res) => {
 app.delete('/users/:id', (req, res) => {
     const user_id = req.params["id"];
     deleteUserByID(user_id)
-        .then(() => {
-            res.status(204).send();
+        .then((result) => {
+            if(!result || result == undefined){
+                res.status(404).send("Resource Not Found");
+            }
+            else{
+                res.status(204).send();
+            }
         })
         .catch((error) => {
             console.log(error);
