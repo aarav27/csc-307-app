@@ -1,63 +1,55 @@
 import express from "express";
 import cors from "cors";
+import mongoose from "mongoose"
+import User from "./user.js"
 // Helpful Note: Use export DEBUG='express:router'
 
 const app = express();
 const port = 8000;
 
-const users = {
-    users_list: [
-      {
-        id: "xyz789",
-        name: "Charlie",
-        job: "Janitor"
-      },
-      {
-        id: "abc123",
-        name: "Mac",
-        job: "Bouncer"
-      },
-      {
-        id: "ppp222",
-        name: "Mac",
-        job: "Professor"
-      },
-      {
-        id: "yat999",
-        name: "Dee",
-        job: "Aspring actress"
-      },
-      {
-        id: "zap555",
-        name: "Dennis",
-        job: "Bartender"
-      }
-    ]
-  };
+mongoose.set("debug", true);
 
-const findUserByName = (name) => {
-    return users["users_list"].filter(
-        (user) => user["name"] === name
-    );
-  }
+mongoose
+    .connect("mongodb://localhost:27017/users", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .catch((error) => console.log(error));
 
-const findUserById = (id) => {
-    return users["users_list"].find(
-        (user) => user["id"] === id
-    )
-  }
-
-const findUserByNameJob = (name, job) => {
-    return users["users_list"].filter(
-        (user) => (user["name"] === name && user["job"] === job)
-    )
+function getUsers(name, job){
+    let promise;
+    if (name === undefined && job === undefined){
+        promise = User.find()
+    }
+    else if(name && !job){
+        promise = findUserByName(name)
+    }
+    else if(job && !name){
+        promise = findUserByJob(job)
+    }
+    return promise;
 }
 
-const addUser = (user) => {
-    const user_id = generateRandomUserID()
-    user["id"] = user_id;
-    users["users_list"].push(user);
-    return user
+const findUserById = (id) => {
+    return User.findById(id);
+}
+
+const findUserByName = (name) => {
+    return User.find({name: name});
+}
+  
+const findUserByJob = (job) => {
+    return User.find({job: job});
+}
+
+const findUserByNameJob = (name, job) => {
+    return User.find({name: name, job: job})
+}
+
+function addUser(user){
+    const userToAdd = new User(user);
+    const promise = userToAdd.save();
+    return promise
 }
 
 const deleteUserByID = (id) => {
@@ -90,34 +82,39 @@ app.get("/", (req, res) => {
 app.get('/users', (req,res) => {
     const name = req.query.name;
     const job = req.query.job
-    if(name != undefined){
-        let result = findUserByName(name);
-        if (job != undefined){
-            result = findUserByNameJob(name, job)
-        }
-        result = { users_list: result };
-        res.send(result)
-    }
-    else{
-        res.send(users)
-    }
+    getUsers(name, job)
+        .then((result) => {
+            const users = {user_list: result}
+            console.log(users)
+            res.send(users)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 });
 
 app.get('/users/:id', (req, res) => {
     const id = req.params["id"]
-    let result = findUserById(id);
-    if(result === undefined){
-        res.status(404).send("Resource Not Found");
-    }
-    else{
-        res.send(result);
-    }
+    findUserById(id)
+        .then((result) => {
+            res.send(result);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(404).send("Resource Not Found");
+        })
 });
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    const newUser = addUser(userToAdd);
-    res.status(201).send(newUser);
+    addUser(userToAdd)
+        .then((result) => {
+            res.status(201).send(result);
+        })
+        .catch(() => {
+            console.log(error);
+            res.status(500).send('Internal Server Error');
+        })
 })
 
 app.delete('/users/:id', (req, res) => {
@@ -134,3 +131,11 @@ app.delete('/users/:id', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
+
+export default {
+    addUser,
+    getUsers,
+    findUserById,
+    findUserByName,
+    findUserByJob,
+  };
