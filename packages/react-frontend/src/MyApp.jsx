@@ -8,10 +8,10 @@ function MyApp(){
 
     function removeOneCharacter(index){
         const personToDelete = characters[index];
-        deleteUser(personToDelete.id)
+        deleteUser(personToDelete._id)
             .then((response) => {
                 if(response.status == 204){
-                    const updated = characters.filter((character) => character.id != personToDelete.id);
+                    const updated = characters.filter((character) => character._id != personToDelete._id);
                     setCharacters(updated);
                 }
                 else{
@@ -43,7 +43,7 @@ function MyApp(){
     useEffect(() => {
         fetchUsers()
             .then((res) => res.json())
-            .then((json) => setCharacters(json["users_list"]))
+            .then((json) => setCharacters(json["user_list"]))
             .catch((error) => {console.log(error);});
     }, []);
 

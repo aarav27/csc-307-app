@@ -59,18 +59,6 @@ const deleteUserByID = (id) => {
     return User.findByIdAndDelete(id);
 }
 
-const generateRandomUserID = () => {
-    const letters = "abcdefghijklmnopqrstuvwxyz";
-    let string_id = "";
-    let num_id = "";
-    for(let i = 0; i < 3; i += 1){
-        string_id += letters[parseInt(Math.random() * letters.length)];
-        num_id += String(parseInt(Math.random() * 10));
-    }
-    const user_id = string_id + num_id;
-    return user_id
-}
-
 app.use(cors());
 app.use(express.json());
 
