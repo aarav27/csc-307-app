@@ -88,7 +88,7 @@ app.get('/users/:id', (req, res) => {
                 res.status(404).send("Resource Not Found");
             }
             else{
-                res.status(204).send();
+                res.send(result);
             }
         })
         .catch((error) => {
